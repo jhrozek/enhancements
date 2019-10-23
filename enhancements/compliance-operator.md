@@ -44,7 +44,7 @@ of the cluster) with different standards users in regulated environments
 must adhere to.
 
 Enabling users to be compliant with standards their respective industry
-requires would OKD to be used in those environments. This is especially
+requires would enable OKD to be used in those environments. This is especially
 true of the US public sector.
 
 ### Dependencies
@@ -57,9 +57,10 @@ to be better usable for scanning an OKD cluster:
   RFE filed against OpenSCAP and planned by the OpenSCAP team to aggregate
   results from all the cluster nodes into a single report.
 * The remediations were typically done using a shell script or Ansible. For
-  OpenShift we’d want the remediations done using MCOs. However, the remediations
-  are not a hard prerequisite for the first version of the operator, even
-  identifying the gaps in compliance would be useful
+  OpenShift we’d want the remediations done using MachineConfigs or other
+  Custom Resources. However, the remediations are not a hard prerequisite for
+  the first version of the operator, even identifying the gaps in compliance
+  would be useful.
 * For the gaps in compliance we identify, a check must be written. These
   checks are being compiled as a parallel effort. Having a full set of
   checks and/or remediations is not a hard prerequisite for the operator
@@ -77,8 +78,8 @@ mean:
 * Inspect the scan result on the high level (pass/fail/error)
 * Provide a way to collect the detailed results of the scan
   * The results would list a way to remediate the gaps, typically by the means
-    of deploying an MCO, a different way of changing cluster configuration
-    or even a free-form recommendation text.
+    of deploying certain manifests to OKD (e.g. a Machineconfig), a different
+    way of changing cluster configuration or even a free-form recommendation text.
 
 ### Non-Goals
 
@@ -152,7 +153,10 @@ spec:
   content: ssg-ocp4-ds.xml
 ```
 
-## Open Questions
+The profiles and content would be provided as part of the container image. This
+way, we can ensure that the auditor is using officially supported content.
+
+## Need Feedback
 
 How we present the remediations and allow the cluster administrator to execute
 them is something that should be discussed more.
@@ -162,15 +166,25 @@ On a high level, there will be three kinds of remediations:
  * More specific advise, but still needs to be applied manually. For example,
    configure a message of the day so that a legal notice gets displayed after
    login
- * Gaps that can be remediated in a completely autonomous fashio. For example
+ * Gaps that can be remediated in a completely autonomous fashion. For example
    make sure that the `auditd` service is enabled.
 
 At first, we would like to display the remediation in the HTML report so that
 the administrator can copy the advise and, if it's possible to apply directly,
 do that.
 
-How to expose applying the remediation through an API and how to apply the
-remediation exactly is something we need to think about more.
+However, when it comes to applying the remediation, there are two options:
+
+* Output the remediations to yaml files that the user can download and apply.
+  The caveat of this is that it makes it cumbersome: First check the report,
+  then download the remediations, then apply them manually.
+
+* Add the capability so that the opreator can schedule a workload that will
+  apply these remediations. The workflow would be as follows: Check the report
+  then modify the CRD so that the remediation is applied. This is more
+  automatic and user-friendly, however, it requires us giving a lot of
+  privileges to the workload, which might not be ideal.
+
 
 ### Test Plan
 
