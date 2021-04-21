@@ -69,7 +69,9 @@ containers.
 
 The [Security Profiles Operator (SPO)](https://github.com/kubernetes-sigs/security-profiles-operator)
 is an upstream project aiming to ease installation and development of security
-profiles in Kubernetes.
+profiles in Kubernetes. By using these profiles, developers would have a more
+granular way of setting permissions for their workloads, hopefully eliminating
+the need to run privileged containers
 
 ### Goals
 
@@ -83,8 +85,10 @@ profiles in Kubernetes.
 
 ### Non-Goals
 
-What is out of scope for this proposal? Listing non-goals helps to focus discussion
-and make progress.
+ * Developing of profiles for all OpenShift components. While having the OpenShift
+   components locked down is a long-term goal and SPO might come with several profiles
+   for some selected workloads, the intent is not to ship a very wide library of profiles
+   with the initial OpenShift inclusion
 
 ## Proposal
 
